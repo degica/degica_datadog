@@ -21,7 +21,11 @@ module DegicaDatadog
           c.agent.host = Config.datadog_agent_host
           c.agent.port = Config.tracing_port
 
+          c.runtime_metrics.enabled = true
+
           c.tracing.report_hostname = true
+          c.tracing.partial_flush.enabled = true
+          c.tracing.partial_flush.min_spans_threshold = 2_000
 
           c.tracing.instrument :rails,
                                service_name: Config.service,
@@ -32,11 +36,7 @@ module DegicaDatadog
 
       # Start a new span.
       def span!(name, **options, &block)
-        if Config.enabled?
-          Datadog::Tracing.trace(name, **options, &block)
-        else
-          yield
-        end
+        Datadog::Tracing.trace(name, **options, &block)
       end
 
       # Set tags on the current tracing span.
@@ -51,7 +51,7 @@ module DegicaDatadog
 
       # Please don't use this. It's just a temporary thing until we can get the
       # statsd agent installed
-      def add_tags_to_root_span!(**tags)
+      def root_span_tags!(**tags)
         return unless Config.enabled?
 
         # forgive me my friends
