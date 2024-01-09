@@ -22,6 +22,7 @@ module DegicaDatadog
           c.agent.port = Config.tracing_port
 
           c.runtime_metrics.enabled = true
+          c.runtime_metrics.statsd = Statsd.client
 
           c.tracing.partial_flush.enabled = true
           c.tracing.partial_flush.min_spans_threshold = 2_000
