@@ -23,7 +23,6 @@ module DegicaDatadog
 
           c.runtime_metrics.enabled = true
 
-          c.tracing.report_hostname = true
           c.tracing.partial_flush.enabled = true
           c.tracing.partial_flush.min_spans_threshold = 2_000
 
