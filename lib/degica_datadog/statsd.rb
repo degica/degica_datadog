@@ -71,7 +71,10 @@ module DegicaDatadog
         {
           service: Config.service,
           env: Config.environment,
-          version: Config.version
+          version: Config.version,
+          # These are specifically for source code linking.
+          "git.commit.sha": Config.version,
+          "git.repository_url": Config.repository_url
         }
       end
 

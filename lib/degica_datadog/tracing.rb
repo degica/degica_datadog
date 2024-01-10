@@ -17,6 +17,11 @@ module DegicaDatadog
           c.service = Config.service
           c.env = Config.environment
           c.version = Config.version
+          # These are for source code linking.
+          c.tags = {
+            "git.commit.sha" => Config.version,
+            "git.repository_url" => Config.repository_url
+          }
 
           c.agent.host = Config.datadog_agent_host
           c.agent.port = Config.tracing_port

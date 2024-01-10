@@ -28,6 +28,10 @@ module DegicaDatadog
         ENV.fetch("RAILS_ENV", nil)
       end
 
+      def repository_url
+        "github.com/degica/#{service}"
+      end
+
       # URI including http:// prefix & port for the tracing endpoint, or nil.
       def datadog_agent_uri
         return unless enabled?
