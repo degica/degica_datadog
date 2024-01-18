@@ -56,10 +56,15 @@ DegicaDatadog::Tracing.span!("hats.process_payment") do
   # Process a payment.
 end
 
+# Optionally specify a resource and/or tags.
+resource = webhook.provider.name
 tags = {
     "merchant_uuid" => merchant.uuid,
     "merchant_name" => merchant.name,
 }
+DegicaDatadog::Tracing.span!("hats.send_webhook", resource: resource, tags: tags) do
+  # Process a payment.
+end
 
 # Add tags to the current span.
 DegicaDatadog::Tracing.span_tags!(**tags)

@@ -41,6 +41,7 @@ module DegicaDatadog
 
       # Start a new span.
       def span!(name, **options, &block)
+        enrich_span_options!(options)
         Datadog::Tracing.trace(name, **options, &block)
       end
 
@@ -83,6 +84,27 @@ module DegicaDatadog
         end
 
         flattened_hash
+      end
+
+      # Merge in default tags and service name.
+      def enrich_span_options!(options)
+        options[:service] = Config.service
+
+        if options[:tags]
+          options[:tags].merge!(default_span_tags)
+        else
+          options[:tags] = default_span_tags
+        end
+      end
+
+      def default_span_tags
+        {
+          "env" => Config.environment,
+          "version" => Config.version,
+          "service" => Config.service,
+          "git.commit.sha" => Config.version,
+          "git.repository_url" => Config.repository_url
+        }
       end
     end
   end
