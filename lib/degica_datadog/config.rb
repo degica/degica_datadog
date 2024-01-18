@@ -58,6 +58,10 @@ module DegicaDatadog
       def tracing_port
         datadog_agent_uri&.port || 8126
       end
+
+      def inspect
+        "DegicaDatadog::Config<enabled?=#{!!enabled?} service=#{service} version=#{version} environment=#{environment} repository_url=#{repository_url} datadog_agent_host=#{datadog_agent_host} statsd_port=#{statsd_port} tracing_port=#{tracing_port}>" # rubocop:disable Layout/LineLength
+      end
     end
   end
 end
