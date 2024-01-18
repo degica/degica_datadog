@@ -32,10 +32,17 @@ module DegicaDatadog
           c.tracing.partial_flush.enabled = true
           c.tracing.partial_flush.min_spans_threshold = 2_000
 
-          c.tracing.instrument :rails,
-                               service_name: Config.service,
-                               request_queueing: true
+          # Enabling additional settings for these instrumentations.
+          c.tracing.instrument :rails, request_queueing: true
+          c.tracing.instrument :rack, request_queueing: true
           c.tracing.instrument :sidekiq, { tag_args: true }
+
+          # All of these are HTTP clients.
+          c.tracing.instrument :ethon, split_by_domain: true
+          c.tracing.instrument :faraday, split_by_domain: true
+          c.tracing.instrument :http, split_by_domain: true
+          c.tracing.instrument :httpclient, split_by_domain: true
+          c.tracing.instrument :httprb, split_by_domain: true
         end
       end
 
