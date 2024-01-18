@@ -6,14 +6,14 @@ Internal library for StatsD and tracing.
 
 1. Grab the gem from GitHub:
     ```ruby
-    gem 'degica_datadog', git: 'https://github.com/degica/degica_datadog.git', branch: 'main'
+    gem 'degica_datadog', git: "https://github.com/degica/degica_datadog.git", branch: "main"
     ```
 1. Set the `SERVICE_NAME` environment variable to the name of your service.
 1. Then add this to your `config/application.rb` to enable tracing:
     ```ruby
     require "degica_datadog"
 
-    DegicaDatadog::Tracing::init
+    DegicaDatadog::Tracing.init
     ```
 
 Note that you will need to manually setup log correlation for tracing if you use a custom logging setup. This is the relevant bit from `hats`:
@@ -37,13 +37,13 @@ tags: {
     some_tag: 42,
 }
 
-DegicaDatadog::Statsd::with_timing("my_timing", tags: tags) do
+DegicaDatadog::Statsd.with_timing("my_timing", tags: tags) do
     do_a_thing
 end
-DegicaDatadog::Statsd::count("my_count", amount: 1, tags: tags)
-DegicaDatadog::Statsd::gauge("my_gauge", 4, tags: tags)
-DegicaDatadog::Statsd::distribution("my_distribution", 8, tags: tags)
-DegicaDatadog::Statsd::set("my_distribution", payment, tags: tags)
+DegicaDatadog::Statsd.count("my_count", amount: 1, tags: tags)
+DegicaDatadog::Statsd.gauge("my_gauge", 4, tags: tags)
+DegicaDatadog::Statsd.distribution("my_distribution", 8, tags: tags)
+DegicaDatadog::Statsd.set("my_distribution", payment, tags: tags)
 ```
 
 ## Tracing
@@ -52,7 +52,7 @@ The setup above auto-instruments many components of the system, but you can add 
 
 ```ruby
 # Create a new span.
-DegicaDatadog::Tracing::span!("hats.process_payment") do
+DegicaDatadog::Tracing.span!("hats.process_payment") do
   # Process a payment.
 end
 
@@ -62,8 +62,8 @@ tags = {
 }
 
 # Add tags to the current span.
-DegicaDatadog::Tracing::span_tags!(**tags)
+DegicaDatadog::Tracing.span_tags!(**tags)
 
 # Add tags to the current root span.
-DegicaDatadog::Tracing::root_span_tags!(**tags)
+DegicaDatadog::Tracing.root_span_tags!(**tags)
 ```
