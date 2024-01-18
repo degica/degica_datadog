@@ -24,15 +24,15 @@ module DegicaDatadog
       end
 
       def service
-        @service || ENV.fetch("SERVICE_NAME", nil)
+        @service || ENV.fetch("SERVICE_NAME", "unknown")
       end
 
       def version
-        @version || ENV.fetch("_GIT_REVISION", nil)
+        @version || ENV.fetch("_GIT_REVISION", "unknown")
       end
 
       def environment
-        @environment || ENV.fetch("RAILS_ENV", nil)
+        @environment || ENV.fetch("RAILS_ENV", "unknown")
       end
 
       def repository_url
