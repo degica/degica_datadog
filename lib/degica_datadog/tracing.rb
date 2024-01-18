@@ -37,6 +37,7 @@ module DegicaDatadog
           c.tracing.instrument :rack, request_queueing: true
           c.tracing.instrument :rake
           c.tracing.instrument :sidekiq, { tag_args: true }
+          c.tracing.instrument :active_record, service_name: "#{Config.service}-#{Config.environment}}"
 
           # All of these are HTTP clients.
           c.tracing.instrument :ethon, split_by_domain: true
