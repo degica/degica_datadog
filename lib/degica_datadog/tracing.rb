@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "ddtrace"
-require "rails"
 
 module DegicaDatadog
   # Tracing related functionality.
