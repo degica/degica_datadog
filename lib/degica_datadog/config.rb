@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "datadog/statsd"
+require "rails"
 require "json"
 require "uri"
 
@@ -17,7 +18,7 @@ module DegicaDatadog
       end
 
       def service
-        ENV.fetch("SERVICE_NAME", nil)
+        ENV.fetch("SERVICE_NAME", Rails.application&.class&.module_parent_name&.downcase)
       end
 
       def version
