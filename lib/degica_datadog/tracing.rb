@@ -35,6 +35,7 @@ module DegicaDatadog
           # Enabling additional settings for these instrumentations.
           c.tracing.instrument :rails, request_queueing: true
           c.tracing.instrument :rack, request_queueing: true
+          c.tracing.instrument :rake
           c.tracing.instrument :sidekiq, { tag_args: true }
 
           # All of these are HTTP clients.
