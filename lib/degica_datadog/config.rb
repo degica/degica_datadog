@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "datadog/statsd"
-require "rails"
 require "json"
 require "uri"
 
@@ -9,6 +8,13 @@ module DegicaDatadog
   # Configuration for the Datadog agent.
   module Config
     class << self
+      def init(service_name: nil, version: nil, environment: nil, repository_url: nil)
+        @service = service_name
+        @version = version
+        @environment = environment
+        @repository_url = repository_url
+      end
+
       def enabled?
         %w[production staging].include?(environment) || ENV.fetch("DD_AGENT_URI", nil)
       end
@@ -18,19 +24,19 @@ module DegicaDatadog
       end
 
       def service
-        ENV.fetch("SERVICE_NAME", Rails.application&.class&.module_parent_name&.downcase)
+        @service || ENV.fetch("SERVICE_NAME", nil)
       end
 
       def version
-        ENV.fetch("_GIT_REVISION", nil)
+        @version || ENV.fetch("_GIT_REVISION", nil)
       end
 
       def environment
-        ENV.fetch("RAILS_ENV", nil)
+        @environment || ENV.fetch("RAILS_ENV", nil)
       end
 
       def repository_url
-        "github.com/degica/#{service}"
+        @repository_url || "github.com/degica/#{service}"
       end
 
       # URI including http:// prefix & port for the tracing endpoint, or nil.
