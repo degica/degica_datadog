@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "ddtrace"
-require "rails"
 
 module DegicaDatadog
   # Tracing related functionality.
@@ -32,10 +31,20 @@ module DegicaDatadog
           c.tracing.partial_flush.enabled = true
           c.tracing.partial_flush.min_spans_threshold = 2_000
 
-          c.tracing.instrument :rails,
-                               service_name: Config.service,
-                               request_queueing: true
+          # Enabling additional settings for these instrumentations.
+          c.tracing.instrument :rails, request_queueing: true
+          c.tracing.instrument :rack, request_queueing: true
+          c.tracing.instrument :rake
           c.tracing.instrument :sidekiq, { tag_args: true }
+          c.tracing.instrument :active_record, service_name: Config.service
+          c.tracing.instrument :mysql2, service_name: "#{Config.service}-#{Config.environment}"
+
+          # All of these are HTTP clients.
+          c.tracing.instrument :ethon, split_by_domain: true
+          c.tracing.instrument :faraday, split_by_domain: true
+          c.tracing.instrument :http, split_by_domain: true
+          c.tracing.instrument :httpclient, split_by_domain: true
+          c.tracing.instrument :httprb, split_by_domain: true
         end
       end
 

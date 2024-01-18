@@ -13,6 +13,13 @@ Internal library for StatsD and tracing.
     ```ruby
     require "degica_datadog"
 
+    # Config.init is optional if you don't need to set any special config.
+    DegicaDatadog::Config.init(
+      service_name: "hats",
+      version: "1.3",
+      environment: "staging",
+      repository_url: "github.com/degica/not-hats"
+    )
     DegicaDatadog::Tracing.init
     ```
 

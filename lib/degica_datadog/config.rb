@@ -8,6 +8,13 @@ module DegicaDatadog
   # Configuration for the Datadog agent.
   module Config
     class << self
+      def init(service_name: nil, version: nil, environment: nil, repository_url: nil)
+        @service = service_name
+        @version = version
+        @environment = environment
+        @repository_url = repository_url
+      end
+
       def enabled?
         %w[production staging].include?(environment) || ENV.fetch("DD_AGENT_URI", nil)
       end
@@ -17,19 +24,19 @@ module DegicaDatadog
       end
 
       def service
-        ENV.fetch("SERVICE_NAME", nil)
+        @service || ENV.fetch("SERVICE_NAME", "unknown")
       end
 
       def version
-        ENV.fetch("_GIT_REVISION", nil)
+        @version || ENV.fetch("_GIT_REVISION", "unknown")
       end
 
       def environment
-        ENV.fetch("RAILS_ENV", nil)
+        @environment || ENV.fetch("RAILS_ENV", "unknown")
       end
 
       def repository_url
-        "github.com/degica/#{service}"
+        @repository_url || "github.com/degica/#{service}"
       end
 
       # URI including http:// prefix & port for the tracing endpoint, or nil.
@@ -56,6 +63,10 @@ module DegicaDatadog
 
       def tracing_port
         datadog_agent_uri&.port || 8126
+      end
+
+      def inspect
+        "DegicaDatadog::Config<enabled?=#{!!enabled?} service=#{service} version=#{version} environment=#{environment} repository_url=#{repository_url} datadog_agent_host=#{datadog_agent_host} statsd_port=#{statsd_port} tracing_port=#{tracing_port}>" # rubocop:disable Layout/LineLength
       end
     end
   end
