@@ -23,6 +23,8 @@ Internal library for StatsD and tracing.
     DegicaDatadog::Tracing.init
     ```
 
+### Custom Logging
+
 Note that you will need to manually setup log correlation for tracing if you use a custom logging setup. This is the relevant bit from `hats`:
 
 ```ruby
@@ -34,6 +36,18 @@ structured_log.merge!({
   "dd.span_id" => Datadog::Tracing.correlation.span_id
 }.compact)
 ```
+
+### Rake Tasks
+
+If you want to instrument rake tasks, you will need to add this snippet to your `Rakefile`:
+
+```ruby
+require "degica_datadog"
+DegicaDatadog::Config.init(service_name: "hats")
+DegicaDatadog::Tracing.init(rake_tasks: Rake::Task.tasks.map(&:name))
+```
+
+This is because you might not want to instrument all rake tasks, though there should be no significant overhead from doing so. Alternatively you can pass an array of strings containing the task names to instrument.
 
 ## StatsD
 

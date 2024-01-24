@@ -7,7 +7,7 @@ module DegicaDatadog
   module Tracing
     class << self
       # Initialize Datadog tracing. Call this in from config/application.rb.
-      def init # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
+      def init(rake_tasks: []) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
         return unless Config.enabled?
 
         require "ddtrace/auto_instrument"
@@ -34,10 +34,12 @@ module DegicaDatadog
           # Enabling additional settings for these instrumentations.
           c.tracing.instrument :rails, request_queueing: true
           c.tracing.instrument :rack, request_queueing: true
-          c.tracing.instrument :rake
-          c.tracing.instrument :sidekiq, { tag_args: true }
+          c.tracing.instrument :sidekiq, tag_args: true
           c.tracing.instrument :active_record, service_name: Config.service
           c.tracing.instrument :mysql2, service_name: "#{Config.service}-#{Config.environment}"
+
+          # If initialised with rake tasks, instrument those.
+          c.tracing.instrument(:rake, service_name: Config.service, tasks: rake_tasks) if rake_tasks
 
           # All of these are HTTP clients.
           c.tracing.instrument :ethon, split_by_domain: true
