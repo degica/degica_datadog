@@ -35,6 +35,7 @@ module DegicaDatadog
           c.tracing.instrument :rails, request_queueing: true
           c.tracing.instrument :rack, request_queueing: true
           c.tracing.instrument :sidekiq, tag_args: true
+          c.tracing.instrument :active_support, cache_service: Config.service
           c.tracing.instrument :active_record, service_name: Config.service
           c.tracing.instrument :mysql2, service_name: "#{Config.service}-#{Config.environment}"
 
