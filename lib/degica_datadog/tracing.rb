@@ -126,7 +126,10 @@ module DegicaDatadog
           "version" => Config.version,
           "service" => Config.service,
           "git.commit.sha" => Config.version,
-          "git.repository_url" => Config.repository_url
+          "git.repository_url" => Config.repository_url,
+          "component" => "degica_datadog",
+          "span.kind" => "internal",
+          "operation" => "custom_span"
         }
       end
     end
