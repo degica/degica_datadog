@@ -12,7 +12,7 @@ module DegicaDatadog
 
         require "ddtrace/auto_instrument"
 
-        Datadog.configure do |c|
+        Datadog.configure do |c| # rubocop:disable Metrics/BlockLength
           c.service = Config.service
           c.env = Config.environment
           c.version = Config.version
@@ -38,6 +38,7 @@ module DegicaDatadog
           c.tracing.instrument :active_support, cache_service: Config.service
           c.tracing.instrument :active_record, service_name: Config.service
           c.tracing.instrument :mysql2, service_name: "#{Config.service}-#{Config.environment}"
+          c.tracing.instrument :elasticsearch, service_name: Config.service
 
           # If initialised with rake tasks, instrument those.
           c.tracing.instrument(:rake, service_name: Config.service, tasks: rake_tasks) if rake_tasks
