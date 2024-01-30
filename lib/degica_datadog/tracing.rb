@@ -54,11 +54,17 @@ module DegicaDatadog
         # This block is called before traces are sent to the agent, and allows
         # us to modify or filter them.
         Datadog::Tracing.before_flush(
+          # Group subdomains in service tags together.
           Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
-            # Group subdomains in service tags together.
             span.service = "myshopify.com" if span.service.end_with?("myshopify.com")
             span.service = "ngrok.io" if span.service.end_with?("ngrok.io")
             span.service = "ngrok-free.app" if span.service.end_with?("ngrok-free.app")
+          end,
+          # Use method + path as the resource name for outbound HTTP requests.
+          Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
+            if %w[ethon faraday net/http httpclient httprb].include?(span.get_tag("component"))
+              span.resource = "#{span.get_tag("http.method")} #{span.get_tag("http.path_group")}"
+            end
           end
         )
       end
