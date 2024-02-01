@@ -4,10 +4,10 @@ require "ddtrace"
 
 module DegicaDatadog
   # Tracing related functionality.
-  module Tracing # rubocop:disable Metrics/ModuleLength
+  module Tracing
     class << self
       # Initialize Datadog tracing. Call this in from config/application.rb.
-      def init(rake_tasks: []) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+      def init(rake_tasks: []) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
         return unless Config.enabled?
 
         require "ddtrace/auto_instrument"
@@ -69,10 +69,7 @@ module DegicaDatadog
               # ID. The logic seems to be at least vaguely to replace any path
               # segment that contains a digit with a ?, so we're reproducing
               # that here.
-              path_group = span.get_tag("http.url")
-                .split("/")
-                .map { |segment| segment =~ /\d/ ? "?" : segment }
-                .join("/")
+              path_group = DegicaDatadog::Util.path_group(span.get_tag("http.url"))
               span.resource = "#{span.get_tag("http.method")} #{path_group}"
             end
           end
