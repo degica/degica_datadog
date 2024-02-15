@@ -4,10 +4,10 @@ require "ddtrace"
 
 module DegicaDatadog
   # Tracing related functionality.
-  module Tracing
+  module Tracing # rubocop:disable Metrics/ModuleLength
     class << self
       # Initialize Datadog tracing. Call this in from config/application.rb.
-      def init(rake_tasks: []) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
+      def init(rake_tasks: []) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity
         return unless Config.enabled?
 
         require "ddtrace/auto_instrument"
@@ -59,6 +59,10 @@ module DegicaDatadog
             span.service = "myshopify.com" if span.service.end_with?("myshopify.com")
             span.service = "ngrok.io" if span.service.end_with?("ngrok.io")
             span.service = "ngrok-free.app" if span.service.end_with?("ngrok-free.app")
+          end,
+          # Set service tags for AWS services.
+          Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
+            span.service = "aws" if %w[169.254.169.254 169.254.170.2].include?(span.get_tag("peer.hostname"))
           end,
           # Use method + path as the resource name for outbound HTTP requests.
           Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
