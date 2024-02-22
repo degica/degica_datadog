@@ -84,7 +84,7 @@ tags = {
     "merchant.name" => merchant.name,
 }
 DegicaDatadog::Tracing.span!("hats.send_webhook", resource: resource, tags: tags) do
-  # Process a payment.
+  # Send a webhook.
 end
 
 # Add tags to the current span.
