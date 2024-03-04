@@ -55,7 +55,7 @@ This library exposes various different metric types. Please see the [Datadog Han
 
 ```ruby
 tags: {
-    some_tag: 42,
+    "some_tag" => 42,
 }
 
 DegicaDatadog::Statsd.with_timing("my_timing", tags: tags) do

@@ -69,18 +69,18 @@ module DegicaDatadog
 
       def default_tags
         {
-          service: Config.service,
-          env: Config.environment,
-          version: Config.version,
+          "service" => Config.service,
+          "env" => Config.environment,
+          "version" => Config.version,
           # These are specifically for source code linking.
-          "git.commit.sha": Config.version,
-          "git.repository_url": Config.repository_url
+          "git.commit.sha" => Config.version,
+          "git.repository_url" => Config.repository_url
         }
       end
 
       # Add in default tags and transform:
       #
-      # { foo: 42, bar: 23 } => ["foo:42", "bar:23"]
+      # { "foo" => 42, "bar" => 23 } => ["foo:42", "bar:23"]
       #
       # Default tags take precedence, to avoid messing up metrics because
       # of name clashes.
