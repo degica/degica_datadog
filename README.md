@@ -93,3 +93,92 @@ DegicaDatadog::Tracing.span_tags!(**tags)
 # Add tags to the current root span.
 DegicaDatadog::Tracing.root_span_tags!(**tags)
 ```
+
+## Profiling
+
+We have support for detailed CPU and memory profiling, which can give us
+detailed insights into resources spent on every single method call. This is not
+free, both in terms of a small performance overhead, and in terms of money paid
+to Datadog, so we do not have this enabled by default.
+
+Price-wise, it is fine to enable profiling on a reviewapp or staging. Should you
+require profiling on production, you should probably clear that with Engineering
+leadership.
+
+There are several steps to enable profiling, regardless of the environment:
+
+1. Set the `DD_PROFILING_ENABLED=true` environment variable.
+1. Instead of running your command directly, wrap it in `bundle exec ddtracerb
+   exec`, for example `bundle exec ddtracerb exec bin/rails s -p 50130`.
+
+As of the time of writing, memory profiling is experimental, and is gated by a
+set of additional environment variables:
+
+- `DD_PROFILING_EXPERIMENTAL_ALLOCATION_ENABLED=true`
+- `DD_PROFILING_EXPERIMENTAL_HEAP_ENABLED=true`
+- `DD_PROFILING_EXPERIMENTAL_HEAP_SIZE_ENABLED=true`
+
+There is also the experimental timeline view, which is quite useful:
+
+- `DD_PROFILING_EXPERIMENTAL_TIMELINE_ENABLED=true`
+
+## Collecting data from local environments
+
+By default we do not collect data from local environments, but we can.
+
+First install the Datadog agent [following the
+instructions](https://app.datadoghq.com/account/settings/agent/latest?platform=overview),
+and ensure it is running.
+
+Set the `DD_AGENT_URI` environment variable to `http://localhost:8126` (pointing
+to the tracing port) to start collecting both StatsD and tracing data:
+
+```shell
+DD_AGENT_URI=http://localhost:8126 bin/rails serve -p 50130
+```
+
+If you want to collect data from alternative processes such as Sidekiq workers,
+set the environment variable before starting those. The easiest way to do this
+is to `export` them, but be aware that you will continue collecting data until
+you unset the variable.
+
+For profiling local environments, set both the agent URI environment variable,
+and follow the steps to enable profiling. Note that profiling is currently not
+supported on macOS. It does work on Codespaces though.
+
+The data will show up on Datadog under the `development` `env` tag, and will
+also use your local machine hostname for the `host` tag. The `version` tag will
+be `unknown`.
+
+### Codespaces
+
+Codespaces works similarly to regular local environments. Insert the following
+snippet into the `docker-compose.yml` to add a Datadog agent:
+
+```yaml
+  datadog_agent:
+    image: datadog/agent:latest
+    environment:
+      - DD_API_KEY=<enter your API key here>
+    ports:
+      - "8126:8126"
+      - "8125:8125/udp"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+```
+
+Of course, do not commit your API key.
+
+Next, add this line to `.devcontainer/devcontainer.json`:
+
+```json
+  "runServices": ["dev", "datadog_agent"],
+```
+
+Then similarly to the local setup, set the correct agent URI inside codespaces:
+
+```shell
+DD_AGENT_URI=http://datadog_agent:8126 bin/rails serve -p 50130
+```
