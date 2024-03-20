@@ -37,7 +37,8 @@ module DegicaDatadog
           c.tracing.instrument :sidekiq, distributed_tracing: true, tag_args: true
           c.tracing.instrument :active_support, cache_service: Config.service
           c.tracing.instrument :active_record, service_name: Config.service
-          c.tracing.instrument :mysql2, service_name: "#{Config.service}-#{Config.environment}"
+          c.tracing.instrument(:mysql2, service_name: "#{Config.service}-#{Config.environment}",
+                                        comment_propagation: "full")
           c.tracing.instrument :elasticsearch, service_name: Config.service
 
           # If initialised with rake tasks, instrument those.
