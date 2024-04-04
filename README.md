@@ -108,19 +108,8 @@ leadership.
 There are several steps to enable profiling, regardless of the environment:
 
 1. Set the `DD_PROFILING_ENABLED=true` environment variable.
-1. Instead of running your command directly, wrap it in `bundle exec ddtracerb
-   exec`, for example `bundle exec ddtracerb exec bin/rails s -p 50130`.
-
-As of the time of writing, memory profiling is experimental, and is gated by a
-set of additional environment variables:
-
-- `DD_PROFILING_EXPERIMENTAL_ALLOCATION_ENABLED=true`
-- `DD_PROFILING_EXPERIMENTAL_HEAP_ENABLED=true`
-- `DD_PROFILING_EXPERIMENTAL_HEAP_SIZE_ENABLED=true`
-
-There is also the experimental timeline view, which is quite useful:
-
-- `DD_PROFILING_EXPERIMENTAL_TIMELINE_ENABLED=true`
+1. (Optionally) set the `DD_PROFILING_ALLOCATION_ENABLED=true` if you want to profile memory use.
+1. Instead of running your command directly, wrap it in `bundle exec ddprofrb exec`, for example `bundle exec ddprofrb exec bin/rails s -p 50130`.
 
 ## Collecting data from local environments
 
@@ -134,7 +123,7 @@ Set the `DD_AGENT_URI` environment variable to `http://localhost:8126` (pointing
 to the tracing port) to start collecting both StatsD and tracing data:
 
 ```shell
-DD_AGENT_URI=http://localhost:8126 bin/rails serve -p 50130
+DD_AGENT_URI=http://localhost:8126 bin/rails s -p 50130
 ```
 
 If you want to collect data from alternative processes such as Sidekiq workers,
@@ -180,5 +169,5 @@ Next, add this line to `.devcontainer/devcontainer.json`:
 Then similarly to the local setup, set the correct agent URI inside codespaces:
 
 ```shell
-DD_AGENT_URI=http://datadog_agent:8126 bin/rails serve -p 50130
+DD_AGENT_URI=http://datadog_agent:8126 bin/rails s -p 50130
 ```
