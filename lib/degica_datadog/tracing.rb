@@ -55,6 +55,10 @@ module DegicaDatadog
         # This block is called before traces are sent to the agent, and allows
         # us to modify or filter them.
         Datadog::Tracing.before_flush(
+          # Filter out health check spans.
+          Datadog::Tracing::Pipeline::SpanFilter.new do |span|
+            span.operation_name == "rack.request" && span.get_tag("http.url")&.start_with?("/health_check")
+          end,
           # Group subdomains in service tags together.
           Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
             span.service = "myshopify.com" if span.service.end_with?("myshopify.com")
