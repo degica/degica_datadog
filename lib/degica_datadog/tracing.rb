@@ -57,7 +57,7 @@ module DegicaDatadog
         Datadog::Tracing.before_flush(
           # Filter out health check spans.
           Datadog::Tracing::Pipeline::SpanFilter.new do |span|
-            span.operation_name == "rack.request" && span.get_tag("http.url")&.start_with?("/health_check")
+            span.name == "rack.request" && span.get_tag("http.url")&.start_with?("/health_check")
           end,
           # Group subdomains in service tags together.
           Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
