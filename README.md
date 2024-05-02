@@ -171,3 +171,8 @@ Then similarly to the local setup, set the correct agent URI inside codespaces:
 ```shell
 DD_AGENT_URI=http://datadog_agent:8126 bin/rails s -p 50130
 ```
+
+### Disabling
+
+By default statsd and tracing are enabled by simply including this gem into an environment that has the `ECS_ENABLE_CONTAINER_METADATA` or `DD_AGENT_URI` environment variables enabled above, and the `RAILS_ENV` is set to either `production` or `staging`. If there are cases where you do want to disable it, you can set the ENV var `DISABLE_DEGICA_DATADOG=true` and you will force disable this gem.
+
