@@ -33,6 +33,11 @@ RSpec.describe DegicaDatadog::Config do
       }
       expect(!!described_class.enabled?).to be(true)
     end
+
+    it "is false when the env var flag is set" do
+      allow(described_class).to receive(:disable_env_var_flag).and_return(true)
+      expect(described_class.enabled?).to eq(false)
+    end
   end
 
   describe ".datadog_agent_uri" do

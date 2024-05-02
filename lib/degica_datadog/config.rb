@@ -16,6 +16,8 @@ module DegicaDatadog
       end
 
       def enabled?
+        return false if disable_env_var_flag
+
         %w[production staging].include?(environment) || ENV.fetch("DD_AGENT_URI", nil)
       end
 
@@ -68,6 +70,13 @@ module DegicaDatadog
       def inspect
         "DegicaDatadog::Config<enabled?=#{!!enabled?} service=#{service} version=#{version} environment=#{environment} repository_url=#{repository_url} datadog_agent_host=#{datadog_agent_host} statsd_port=#{statsd_port} tracing_port=#{tracing_port}>" # rubocop:disable Layout/LineLength
       end
-    end
+
+      private
+
+      def disable_env_var_flag
+        ENV['DISABLE_DEGICA_DATADOG'] == 'true' ||
+        ENV['DISABLE_DEGICA_DATADOG'] == '1'
+      end
+    end # class << self
   end
 end
