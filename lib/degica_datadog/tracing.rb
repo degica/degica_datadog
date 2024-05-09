@@ -59,6 +59,16 @@ module DegicaDatadog
           Datadog::Tracing::Pipeline::SpanFilter.new do |span|
             span.name == "rack.request" && span.get_tag("http.url")&.start_with?("/health_check")
           end,
+          # Filter out static assets.
+          Datadog::Tracing::Pipeline::SpanFilter.new do |span|
+            span.name == "rack.request" &&
+              (span.get_tag("http.url")&.start_with?("/assets") ||
+               span.get_tag("http.url")&.start_with?("/packs"))
+          end,
+          # Filter out NewRelic reporter.
+          Datadog::Tracing::Pipeline::SpanFilter.new do |span|
+            span.service == "collector.newrelic.com"
+          end,
           # Group subdomains in service tags together.
           Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
             span.service = "myshopify.com" if span.service.end_with?("myshopify.com")
