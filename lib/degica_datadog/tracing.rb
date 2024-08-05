@@ -5,9 +5,9 @@ require "ddtrace"
 module DegicaDatadog
   # Tracing related functionality.
   module Tracing # rubocop:disable Metrics/ModuleLength
-    class << self
+    class << self # rubocop:disable Metrics/ClassLength
       # Initialize Datadog tracing. Call this in from config/application.rb.
-      def init(rake_tasks: []) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity
+      def init(rake_tasks: []) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
         return unless Config.enabled?
 
         require "ddtrace/auto_instrument"

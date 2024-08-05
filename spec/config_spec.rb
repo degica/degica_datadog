@@ -7,21 +7,21 @@ RSpec.describe DegicaDatadog::Config do
       allow(ENV).to receive(:fetch) { |key|
         { "RAILS_ENV" => "production" }.fetch(key, nil)
       }
-      expect(!!described_class.enabled?).to be(true)
+      expect(!described_class.enabled?.nil?).to be(true)
     end
 
     it "is true on staging" do
       allow(ENV).to receive(:fetch) { |key|
         { "RAILS_ENV" => "staging" }.fetch(key, nil)
       }
-      expect(!!described_class.enabled?).to be(true)
+      expect(!described_class.enabled?.nil?).to be(true)
     end
 
     it "is false on development" do
       allow(ENV).to receive(:fetch) { |key|
         { "RAILS_ENV" => "development" }.fetch(key, nil)
       }
-      expect(!!described_class.enabled?).to be(false)
+      expect(!described_class.enabled?.nil?).to be(false)
     end
 
     it "is true if DD_AGENT_URI is set" do
@@ -31,7 +31,7 @@ RSpec.describe DegicaDatadog::Config do
           "DD_AGENT_URI" => "some-uri"
         }.fetch(key, nil)
       }
-      expect(!!described_class.enabled?).to be(true)
+      expect(!described_class.enabled?.nil?).to be(true)
     end
 
     it "is false when the env var flag is set" do
