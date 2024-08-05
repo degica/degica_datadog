@@ -2,6 +2,70 @@
 
 # rubocop:disable Metrics/BlockLength
 RSpec.describe DegicaDatadog::Config do
+  describe ".init" do
+    context "full initialisation" do
+      let(:service_name) { "degica" }
+      let(:version) { "1.0.0" }
+      let(:environment) { "production" }
+      let(:repository_url) { "https://github.com/degica/degica_datadog" }
+
+      before do
+        described_class.init(
+          service_name: service_name,
+          version: version,
+          environment: environment,
+          repository_url: repository_url
+        )
+      end
+
+      it "sets service_name correctly" do
+        expect(described_class.service).to eq(service_name)
+      end
+
+      it "sets version correctly" do
+        expect(described_class.version).to eq(version)
+      end
+
+      it "sets environment correctly" do
+        expect(described_class.environment).to eq(environment)
+      end
+
+      it "sets repository_url correctly" do
+        expect(described_class.repository_url).to eq(repository_url)
+      end
+    end
+
+    context "fetches from env" do
+      let(:service_name) { "mocked_service_name" }
+      let(:version) { "mocked_version" }
+      let(:environment) { "mocked_environment" }
+
+      before do
+        described_class.init
+
+        allow(ENV).to receive(:fetch).with("SERVICE_NAME", "unknown").and_return(service_name)
+        allow(ENV).to receive(:fetch).with("_GIT_REVISION", "unknown").and_return(version)
+        allow(ENV).to receive(:fetch).with("RAILS_ENV", "unknown").and_return(environment)
+      end
+
+      it "sets service_name correctly" do
+        expect(described_class.service).to eq(service_name)
+      end
+
+      it "sets version correctly" do
+        expect(described_class.version).to eq(version)
+      end
+
+      it "sets environment correctly" do
+        expect(described_class.environment).to eq(environment)
+      end
+
+      it "sets repository_url correctly" do
+        expect(described_class.repository_url).to eq("github.com/degica/#{service_name}")
+      end
+    end
+  end
+
   describe ".enabled?" do
     it "is true on production" do
       allow(ENV).to receive(:fetch) { |key|
@@ -37,6 +101,13 @@ RSpec.describe DegicaDatadog::Config do
     it "is false when the env var flag is set" do
       allow(described_class).to receive(:disable_env_var_flag).and_return(true)
       expect(described_class.enabled?).to eq(false)
+    end
+  end
+
+  describe ".statsd_client" do
+    it "returns the statsd client" do
+      allow(described_class).to receive(:enabled?).and_return(true)
+      expect(described_class.statsd_client).to be_kind_of(Datadog::Statsd)
     end
   end
 
@@ -106,6 +177,14 @@ RSpec.describe DegicaDatadog::Config do
     it "uses the port from the URI" do
       allow(described_class).to receive(:datadog_agent_uri) { URI.parse("http://localhost:1234") }
       expect(described_class.tracing_port).to eq(1234)
+    end
+  end
+
+  describe ".inspect" do
+    it "returns a string representation of the config" do
+      allow(described_class).to receive(:enabled?).and_return(true)
+      allow(described_class).to receive(:statsd_client) { double("statsd_client") }
+      expect(described_class.inspect).to eq("DegicaDatadog::Config<enabled?=true service=unknown version=unknown environment=unknown repository_url=github.com/degica/unknown datadog_agent_host=localhost statsd_port=8125 tracing_port=8126>") # rubocop:disable Layout/LineLength
     end
   end
 end

@@ -3,9 +3,10 @@ name: Ruby
 on: [push]
 
 jobs:
-  build:
+  rspec:
     runs-on: ubuntu-latest
-    name: Build and test
+    name: Run rspec
+    permissions: write-all
 
     steps:
     - name: Checkout code
@@ -19,6 +20,16 @@ jobs:
 
     - name: Run tests
       run: bundle exec rspec
+
+    - name: Print coverages
+      uses: 5monkeys/cobertura-action@v14
+      with:
+          path: coverage/coverage.xml
+          minimum_coverage: 65 # TODO: change to 100% after tracing covered
+          fail_below_threshold: true
+          show_line: true
+          show_missing: true
+          link_missing_lines: true
 
   rubocop:
     runs-on: ubuntu-latest
