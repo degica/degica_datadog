@@ -1,7 +1,6 @@
 name: Ruby
 
-on:
-  push:
+on: [push]
 
 jobs:
   build:
@@ -9,12 +8,31 @@ jobs:
     name: Build and test
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
-    - name: Install dependencies
-      run: bundle install
+        ruby-version: '3.2'
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
     - name: Run tests
       run: bundle exec rspec
+
+  rubocop:
+    runs-on: ubuntu-latest
+    name: Run rubocop
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
