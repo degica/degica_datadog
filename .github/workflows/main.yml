@@ -1,7 +1,6 @@
 name: Ruby
 
-on:
-  push:
+on: [push]
 
 jobs:
   build:
@@ -10,11 +9,33 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.2
+
     - name: Install dependencies
       run: bundle install
+
     - name: Run tests
       run: bundle exec rspec
+
+  rubocop:
+    runs-on: ubuntu-latest
+    name: Run rubocop
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Run RuboCop
+        run: bundle exec rubocop
