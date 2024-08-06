@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe DegicaDatadog::Config do
   describe ".init" do
     context "full initialisation" do

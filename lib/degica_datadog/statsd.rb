@@ -13,7 +13,7 @@ module DegicaDatadog
       # - <name>.95percentile
       #
       # The reported time is in milliseconds.
-      def with_timing(name, tags: {}) # rubocop:disable Metrics/MethodLength
+      def with_timing(name, tags: {})
         if Config.enabled?
           start = Time.now.to_f
           begin
