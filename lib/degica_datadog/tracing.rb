@@ -4,15 +4,15 @@ require "datadog"
 
 module DegicaDatadog
   # Tracing related functionality.
-  module Tracing # rubocop:disable Metrics/ModuleLength
-    class << self # rubocop:disable Metrics/ClassLength
+  module Tracing
+    class << self
       # Initialize Datadog tracing. Call this in from config/application.rb.
-      def init(rake_tasks: []) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+      def init(rake_tasks: [])
         return unless Config.enabled?
 
         require "datadog/auto_instrument"
 
-        Datadog.configure do |c| # rubocop:disable Metrics/BlockLength
+        Datadog.configure do |c|
           c.service = Config.service
           c.env = Config.environment
           c.version = Config.version
@@ -126,7 +126,7 @@ module DegicaDatadog
       # To pass in nested data to DD we need to pass keys separated with a "."
       # eg, "outer.inner". This method takes a nested hash and flattens it by
       # creating DD compatible key names.
-      def flatten_hash_for_span(hsh, key = nil) # rubocop:disable Metrics/MethodLength
+      def flatten_hash_for_span(hsh, key = nil)
         flattened_hash = {}
         hsh.each do |k, v|
           flattened_key = [key, k].compact.join(".")

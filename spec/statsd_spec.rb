@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/BlockLength
 RSpec.describe DegicaDatadog::Statsd do
   let(:stub_client) { double }
 
@@ -130,4 +129,3 @@ RSpec.describe DegicaDatadog::Statsd do
     end
   end
 end
-# rubocop:enable Metrics/BlockLength
