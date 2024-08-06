@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "ddtrace"
+require "datadog"
 
 module DegicaDatadog
   # Tracing related functionality.
@@ -10,7 +10,7 @@ module DegicaDatadog
       def init(rake_tasks: []) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
         return unless Config.enabled?
 
-        require "ddtrace/auto_instrument"
+        require "datadog/auto_instrument"
 
         Datadog.configure do |c| # rubocop:disable Metrics/BlockLength
           c.service = Config.service
