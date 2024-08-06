@@ -1,6 +1,40 @@
 # frozen_string_literal: true
 
 RSpec.describe DegicaDatadog::Tracing do
+  describe ".init" do
+    it "does nothing when disabled" do
+      allow(DegicaDatadog::Config).to receive(:enabled?).and_return(false)
+      expect(described_class.init).to be_nil
+    end
+
+    it "does not raise error" do
+      allow(DegicaDatadog::Config).to receive(:enabled?).and_return(true)
+      expect { described_class.init }.not_to raise_error
+    end
+  end
+
+  describe ".span!" do
+    it "starts a new span" do
+      expect { described_class.span!("test") }.to change { Datadog::Tracing.active_span }.from(nil)
+    end
+  end
+
+  describe ".span_tags!" do
+    it "adds tags into running span" do
+      allow(DegicaDatadog::Config).to receive(:enabled?).and_return(true)
+      described_class.span!("test")
+      described_class.span_tags!(foo: "bar")
+      expect(Datadog::Tracing.active_span&.tags).to include("foo" => "bar")
+    end
+  end
+
+  describe ".flatten_hash_for_span" do
+    it "flattens the hash" do
+      hash = { foo: { bar: "baz" } }
+      expect(described_class.flatten_hash_for_span(hash)).to eq({ "foo.bar": "baz" })
+    end
+  end
+
   describe ".enrich_span_options!" do
     it "adds the service name" do
       options = {}
