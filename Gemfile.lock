@@ -3,6 +3,7 @@ PATH
   specs:
     degica_datadog (0.1.0)
       datadog (~> 2.0)
+      datadog-ci (~> 1.0)
       dogstatsd-ruby (~> 5)
 
 GEM
@@ -79,7 +80,6 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.0)
-  datadog-ci
   degica_datadog!
   rspec (~> 3.0)
   rubocop
