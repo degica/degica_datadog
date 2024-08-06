@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "datadog", "~> 2.0"
   spec.add_dependency "dogstatsd-ruby", "~> 5"
   spec.add_development_dependency "bundler", "~> 2.0"
+  spec.add_development_dependency "datadog-ci"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "rubocop"
   spec.add_development_dependency "simplecov"
