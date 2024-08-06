@@ -59,8 +59,6 @@ GEM
       unicode-display_width (>= 2.4.0, < 3.0)
     rubocop-ast (1.30.0)
       parser (>= 3.2.1.0)
-    rubocop-rspec (3.0.0)
-      rubocop (~> 1.40)
     ruby-progressbar (1.13.0)
     simplecov (0.22.0)
       docile (~> 1.1)
@@ -81,7 +79,6 @@ DEPENDENCIES
   degica_datadog!
   rspec (~> 3.0)
   rubocop
-  rubocop-rspec
   simplecov
   simplecov-cobertura
 
