@@ -30,7 +30,7 @@ module DegicaDatadog
       end
 
       def version
-        @version || ENV.fetch("_GIT_REVISION", "unknown")
+        @version || (ENV.fetch("PLATFORM", "") + ENV.fetch("_GIT_REVISION", "unknown"))
       end
 
       def environment
