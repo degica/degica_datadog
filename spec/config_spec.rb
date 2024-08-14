@@ -77,7 +77,7 @@ RSpec.describe DegicaDatadog::Config do
       end
 
       it "sets version correctly" do
-        expect(described_class.version).to eq("#{platform}#{version}")
+        expect(described_class.version).to eq("#{platform}-#{version}")
       end
     end
   end
