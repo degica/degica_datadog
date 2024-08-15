@@ -43,6 +43,7 @@ RSpec.describe DegicaDatadog::Config do
         described_class.init
 
         allow(ENV).to receive(:fetch).with("SERVICE_NAME", "unknown").and_return(service_name)
+        allow(ENV).to receive(:fetch).with("PLATFORM", "").and_return("")
         allow(ENV).to receive(:fetch).with("_GIT_REVISION", "unknown").and_return(version)
         allow(ENV).to receive(:fetch).with("RAILS_ENV", "unknown").and_return(environment)
       end
@@ -61,6 +62,22 @@ RSpec.describe DegicaDatadog::Config do
 
       it "sets repository_url correctly" do
         expect(described_class.repository_url).to eq("github.com/degica/#{service_name}")
+      end
+    end
+
+    context "fetches from env on codepipeline" do
+      let(:version) { "mocked_version" }
+      let(:platform) { "cpp" } # codepipeline prefix
+
+      before do
+        described_class.init
+
+        allow(ENV).to receive(:fetch).with("PLATFORM", "").and_return(platform)
+        allow(ENV).to receive(:fetch).with("_GIT_REVISION", "unknown").and_return(version)
+      end
+
+      it "sets version correctly" do
+        expect(described_class.version).to eq("#{version}-#{platform}")
       end
     end
   end

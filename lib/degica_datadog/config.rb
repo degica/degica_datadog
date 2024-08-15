@@ -30,7 +30,11 @@ module DegicaDatadog
       end
 
       def version
-        @version || ENV.fetch("_GIT_REVISION", "unknown")
+        return @version if @version
+
+        platform = ENV.fetch("PLATFORM", "")
+        git_revision = ENV.fetch("_GIT_REVISION", "unknown")
+        platform.empty? ? git_revision : "#{git_revision}-#{platform}"
       end
 
       def environment
