@@ -34,7 +34,7 @@ module DegicaDatadog
 
         platform = ENV.fetch("PLATFORM", "")
         git_revision = ENV.fetch("_GIT_REVISION", "unknown")
-        platform.empty? ? git_revision : "#{platform}-#{git_revision}"
+        platform.empty? ? git_revision : "#{git_revision}-#{platform}"
       end
 
       def environment
