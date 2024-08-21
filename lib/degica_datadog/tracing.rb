@@ -91,6 +91,10 @@ module DegicaDatadog
               path_group = DegicaDatadog::Util.path_group(span.get_tag("http.url"))
               span.resource = "#{span.get_tag("http.method")} #{path_group}"
             end
+          end,
+          # Remove AWS metadata fetches
+          Datadog::Tracing::Pipeline::SpanFilter.new do |span|
+            %w[/metadata/instance/compute /latest/api/token].include?(span.get_tag("http.url"))
           end
         )
       end
