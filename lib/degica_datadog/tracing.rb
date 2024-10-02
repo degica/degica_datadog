@@ -74,7 +74,7 @@ module DegicaDatadog
             span.service = "myshopify.com" if span.service.end_with?("myshopify.com")
             span.service = "ngrok.io" if span.service.end_with?("ngrok.io")
             span.service = "ngrok-free.app" if span.service.end_with?("ngrok-free.app")
-            span.service = "redemption" if span.service.match /.*redemption.*komoju\.com/
+            span.service = "redemption" if span.service.match(/.*redemption.*komoju\.com/)
           end,
           # Set service tags for AWS services.
           Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
