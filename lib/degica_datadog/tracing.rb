@@ -30,26 +30,16 @@ module DegicaDatadog
 
           c.tracing.partial_flush.enabled = true
           c.tracing.partial_flush.min_spans_threshold = 2_000
+          c.tracing.contrib.global_default_service_name.enabled = true
 
           # Enabling additional settings for these instrumentations.
           c.tracing.instrument :rails, request_queueing: true
           c.tracing.instrument :rack, request_queueing: true
           c.tracing.instrument :sidekiq, distributed_tracing: true, quantize: { args: { show: :all } }
-          c.tracing.instrument :active_support, cache_service: Config.service
-          c.tracing.instrument :active_record, service_name: Config.service
-          c.tracing.instrument(:mysql2, service_name: "#{Config.service}-#{Config.environment}",
-                                        comment_propagation: "full")
-          c.tracing.instrument :elasticsearch, service_name: Config.service
+          c.tracing.instrument :mysql2, comment_propagation: "full"
 
           # If initialised with rake tasks, instrument those.
-          c.tracing.instrument(:rake, service_name: Config.service, tasks: rake_tasks) if rake_tasks
-
-          # All of these are HTTP clients.
-          c.tracing.instrument :ethon, split_by_domain: true
-          c.tracing.instrument :faraday, split_by_domain: true
-          c.tracing.instrument :http, split_by_domain: true
-          c.tracing.instrument :httpclient, split_by_domain: true
-          c.tracing.instrument :httprb, split_by_domain: true
+          c.tracing.instrument(:rake, tasks: rake_tasks) if rake_tasks
         end
 
         # This block is called before traces are sent to the agent, and allows
@@ -67,17 +57,13 @@ module DegicaDatadog
           end,
           # Filter out NewRelic reporter.
           Datadog::Tracing::Pipeline::SpanFilter.new do |span|
-            span.service == "collector.newrelic.com"
+            span.get_tag("peer.hostname") == "collector.newrelic.com"
           end,
           # Group subdomains in service tags together.
           Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
-            span.service = "myshopify.com" if span.service.end_with?("myshopify.com")
-            span.service = "ngrok.io" if span.service.end_with?("ngrok.io")
-            span.service = "ngrok-free.app" if span.service.end_with?("ngrok-free.app")
-          end,
-          # Set service tags for AWS services.
-          Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
-            span.service = "aws" if %w[169.254.169.254 169.254.170.2].include?(span.get_tag("peer.hostname"))
+            span.set_tag("peer.hostname", "myshopify.com") if span.get_tag("peer.hostname")&.end_with?("myshopify.com")
+            span.set_tag("peer.hostname", "ngrok.io") if span.get_tag("peer.hostname")&.end_with?("ngrok.io")
+            span.set_tag("peer.hostname", "ngrok-free.app") if span.get_tag("peer.hostname")&.end_with?("ngrok-free.app")
           end,
           # Use method + path as the resource name for outbound HTTP requests.
           Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
