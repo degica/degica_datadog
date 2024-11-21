@@ -115,6 +115,15 @@ module DegicaDatadog
         end
       end
 
+      # Add an exception to the current span and mark it as errored.
+      def error!(e)
+        return unless Config.enabled?
+        return unless e.is_a?(Exception)
+
+        current_span = Datadog::Tracing.active_span
+        current_span&.set_error(e)
+      end
+
       # Please don't use this. It's just a temporary thing until we can get the
       # statsd agent installed
       def root_span_tags!(**tags)
