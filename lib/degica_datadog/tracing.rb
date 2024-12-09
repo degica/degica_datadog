@@ -37,6 +37,7 @@ module DegicaDatadog
           c.tracing.instrument :rack, request_queueing: true
           c.tracing.instrument :sidekiq, distributed_tracing: true, quantize: { args: { show: :all } }
           c.tracing.instrument :mysql2, comment_propagation: "full"
+          c.tracing.instrument :pg, comment_propagation: "full"
 
           # If initialised with rake tasks, instrument those.
           c.tracing.instrument(:rake, tasks: rake_tasks) if rake_tasks
