@@ -90,6 +90,11 @@ DegicaDatadog::Tracing.span_tags!(**tags)
 
 # Add tags to the current root span.
 DegicaDatadog::Tracing.root_span_tags!(**tags)
+
+# Record an exception on the current span. This is only required if the 
+# exception is caught and swallowed, so we return a 200 or similar, but we 
+# still want to report the exception to Datadog for tracking purposes.
+DegicaDatadog::Tracing.error!(e)
 ```
 
 ## Profiling
@@ -173,4 +178,3 @@ DD_AGENT_URI=http://datadog_agent:8126 bin/rails s -p 50130
 ### Disabling
 
 By default statsd and tracing are enabled by simply including this gem into an environment that has the `ECS_ENABLE_CONTAINER_METADATA` or `DD_AGENT_URI` environment variables enabled above, and the `RAILS_ENV` is set to either `production` or `staging`. If there are cases where you do want to disable it, you can set the ENV var `DISABLE_DEGICA_DATADOG=true` and you will force disable this gem.
-

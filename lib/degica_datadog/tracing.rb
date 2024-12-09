@@ -96,7 +96,6 @@ module DegicaDatadog
       def span_tags!(**tags)
         return unless Config.enabled?
 
-        current_span = Datadog::Tracing.active_span
         tags.each do |k, v|
           current_span&.set_tag(k.to_s, v)
         end
@@ -104,20 +103,27 @@ module DegicaDatadog
 
       # Add an exception to the current span and mark it as errored.
       def error!(e)
-        return unless Config.enabled?
-        return unless e.is_a?(Exception)
+        return unless Config.enabled? && e.is_a?(Exception)
 
-        current_span = Datadog::Tracing.active_span
         current_span&.set_error(e)
+        root_span&.set_error(e)
+      end
+
+      # Returns the current span.
+      def current_span
+        Datadog::Tracing.active_span unless Config.enabled?
+      end
+
+      # Returns the current root span. Root here meaning within the service, not necessarily the
+      # actual trace root span if that is from a different service.
+      def root_span
+        # forgive me my friends
+        Datadog::Tracing.active_trace.instance_variable_get(:@root_span) unless Config.enabled?
       end
 
       # Please don't use this. It's just a temporary thing until we can get the
       # statsd agent installed
       def root_span_tags!(**tags)
-        return unless Config.enabled?
-
-        # forgive me my friends
-        root_span = Datadog::Tracing.active_trace.instance_variable_get(:@root_span)
         tags.each do |k, v|
           root_span&.set_tag(k.to_s, v)
         end
@@ -153,6 +159,7 @@ module DegicaDatadog
         end
       end
 
+      # Default span tags that get attached automatically.
       def default_span_tags
         {
           "env" => Config.environment,
