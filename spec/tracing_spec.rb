@@ -13,6 +13,38 @@ RSpec.describe DegicaDatadog::Tracing do
     end
   end
 
+  describe ".current_span" do
+    it "does nothing when disabled" do
+      allow(DegicaDatadog::Config).to receive(:enabled?).and_return(false)
+      described_class.span!("test") do
+        expect(described_class.current_span).to be_nil
+      end
+    end
+
+    it "returns the current span" do
+      allow(DegicaDatadog::Config).to receive(:enabled?).and_return(true)
+      described_class.span!("test") do
+        expect(described_class.current_span).to_not be_nil
+      end
+    end
+  end
+
+  describe ".root_span" do
+    it "does nothing when disabled" do
+      allow(DegicaDatadog::Config).to receive(:enabled?).and_return(false)
+      described_class.span!("test") do
+        expect(described_class.root_span).to be_nil
+      end
+    end
+
+    it "returns the current span" do
+      allow(DegicaDatadog::Config).to receive(:enabled?).and_return(true)
+      described_class.span!("test") do
+        expect(described_class.root_span).to_not be_nil
+      end
+    end
+  end
+
   describe ".span!" do
     it "starts a new span" do
       expect { described_class.span!("test") }.to change { Datadog::Tracing.active_span }.from(nil)

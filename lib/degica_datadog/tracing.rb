@@ -111,14 +111,14 @@ module DegicaDatadog
 
       # Returns the current span.
       def current_span
-        Datadog::Tracing.active_span unless Config.enabled?
+        Datadog::Tracing.active_span if Config.enabled?
       end
 
       # Returns the current root span. Root here meaning within the service, not necessarily the
       # actual trace root span if that is from a different service.
       def root_span
         # forgive me my friends
-        Datadog::Tracing.active_trace.instance_variable_get(:@root_span) unless Config.enabled?
+        Datadog::Tracing.active_trace.instance_variable_get(:@root_span) if Config.enabled?
       end
 
       # Please don't use this. It's just a temporary thing until we can get the
