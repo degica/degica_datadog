@@ -68,7 +68,9 @@ module DegicaDatadog
           Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
             span.set_tag("peer.hostname", "myshopify.com") if span.get_tag("peer.hostname")&.end_with?("myshopify.com")
             span.set_tag("peer.hostname", "ngrok.io") if span.get_tag("peer.hostname")&.end_with?("ngrok.io")
-            span.set_tag("peer.hostname", "ngrok-free.app") if span.get_tag("peer.hostname")&.end_with?("ngrok-free.app")
+            if span.get_tag("peer.hostname")&.end_with?("ngrok-free.app")
+              span.set_tag("peer.hostname", "ngrok-free.app")
+            end
           end,
           # Use method + path as the resource name for outbound HTTP requests.
           Datadog::Tracing::Pipeline::SpanProcessor.new do |span|
@@ -106,11 +108,11 @@ module DegicaDatadog
       end
 
       # Add an exception to the current span and mark it as errored.
-      def error!(e)
-        return unless Config.enabled? && e.is_a?(Exception)
+      def error!(err)
+        return unless Config.enabled? && err.is_a?(Exception)
 
-        current_span&.set_error(e)
-        root_span&.set_error(e)
+        current_span&.set_error(err)
+        root_span&.set_error(err)
       end
 
       # Returns the current span.
