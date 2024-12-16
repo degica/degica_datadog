@@ -41,6 +41,10 @@ module DegicaDatadog
 
           # If initialised with rake tasks, instrument those.
           c.tracing.instrument(:rake, tasks: rake_tasks) if rake_tasks
+
+          # Enable application security tracing.
+          c.appsec.enabled = true
+          c.appsec.instrument :rails
         end
 
         # This block is called before traces are sent to the agent, and allows
